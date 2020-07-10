@@ -16,14 +16,21 @@
  *******************************************************************************/
 
  /**
-  This is a sample program to illustrate the use of the MQTT Client library
-  on the mbed platform.  The Client class requires two classes which mediate
-  access to system interfaces for networking and timing.  As long as these two
-  classes provide the required public programming interfaces, it does not matter
-  what facilities they use underneath. In this program, they use the mbed
-  system libraries.
-
+ * This is a sample program to illustrate the use of the MQTT Client library
+ * on the mbed platform.  The Client class requires two classes which mediate
+ * access to system interfaces for networking and timing.  As long as these two
+ * classes provide the required public programming interfaces, it does not matter
+ * what facilities they use underneath. In this program, they use the mbed
+ * system libraries.
+ *
  */
+
+ /* This program forms the base platform for the CITY1082 Microprocessors and
+  * High Level Languages module Assignment 2 - develop a simple embedded system
+  *
+  * Andrew Reed - areed@cityplym.ac.uk
+  *
+  */
 
 #define MQTTCLIENT_QOS1 0
 #define MQTTCLIENT_QOS2 0
@@ -48,11 +55,6 @@ static volatile bool isMessageArrived = false;
 const int MESSAGE_BUFFER_SIZE = 256;
 /* Buffer for a receiving message. */
 char messageBuffer[MESSAGE_BUFFER_SIZE];
-
-/* Enable GPIO power for Wio target */
-#if defined(TARGET_WIO_3G) || defined(TARGET_WIO_BG96)
-DigitalOut GrovePower(GRO_POWR, 1);
-#endif
 
 // An event queue is a very useful structure to debounce information between contexts (e.g. ISR and normal threads)
 // This is great because things such as network operations are illegal in ISR, so updating a resource in a button's fall() function is not allowed
@@ -92,7 +94,7 @@ int main(int argc, char* argv[])
     const float version = 1.0;
     bool isSubscribed = false;
 
-    NetworkInterface* network = NULL;
+    NetworkInterface* network ;//= NULL;
     TLSSocket *socket = new TLSSocket; // Allocate on heap to avoid stack overflow.
     MQTTClient* mqttClient = NULL;
 
@@ -121,13 +123,22 @@ int main(int argc, char* argv[])
         }
     }
     printf("Network interface opened successfully.\r\n");
-    printf("\r\n");
+//    printf("IP Address: %s\r\n", );
+//    SocketAddress a;
+    
+    printf("IP address: %s\n", network->get_ip_address());//get_ip_address() ? a.get_ip_address() : "None");
+    
+    printf("Netmask: %s\n", network->get_netmask()); //a.get_ip_address() ? a.get_ip_address() : "None");
+    
+    printf("Gateway: %s\n", network->get_gateway());//a.get_ip_address() ? a.get_ip_address() : "None");
+
 
     // sync the real time clock (RTC)
     NTPClient ntp(network);
     char ntpServer[20] = "time.google.com";
     ntp.set_server(ntpServer, 123);
-    time_t now = ntp.get_timestamp() + 3600;
+    time_t now = ntp.get_timestamp() + 3600; // BST hack add an hour
+ //   time_t now = ntp.get_timestamp(); // GMT
     set_time(now);
     printf("Time is now %s", ctime(&now));
 
