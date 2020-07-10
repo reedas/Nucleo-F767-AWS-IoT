@@ -1,5 +1,8 @@
 *.py[cod]
 
+# AWS Keys don't need to be shared
+MQTT_server_setting.h
+
 # Distribution dir
 dist
 
