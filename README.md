@@ -1,1 +1,0 @@
-# Nucleo-F767-AWS-IoT
